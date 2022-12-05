@@ -24,8 +24,9 @@ def main(argv):
     s.send(make_intro_packet(name).encode())
 
     init_windows()
-
+    # t_server is the recieving thread that recieves packets from the server and displays them.
     t_server = threading.Thread(target=server_messages, args=(s,), daemon=True)
+    # t_client is the main sending thread that will read keyboard input and send chat messages to the server.
     t_client = threading.Thread(target=client_messages, args=(s, name))
     threads = [t_server, t_client]
     for t in threads:
@@ -39,7 +40,7 @@ def main(argv):
 
 def client_messages(s, name):
     while True:
-        data = read_command(name + '> ')
+        data = read_command(name + ': ')
         
         if data[0] == '/':
             if data == '/q':
