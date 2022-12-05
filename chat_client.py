@@ -40,14 +40,15 @@ def main(argv):
 def client_messages(s, name):
     while True:
         data = read_command(name + '> ')
-        if len(data) != 0:
-            s.send(make_chat_packet(data).encode())
-        elif data[0] == '/':
+        
+        if data[0] == '/':
             if data == '/q':
                 s.close()
                 return
             else:
                 print_message('Command not recognized')
+        elif len(data) != 0:
+            s.send(make_chat_packet(data).encode())
         else:
             continue
 
@@ -59,14 +60,14 @@ def server_messages(s):
 
 def make_message(packet):
     if packet['type'] == 'chat':
-        return packet['john'] + ': ' + packet['message']
+        return '***' + packet['nickname'] + ': ' + packet['message']
     elif packet['type'] == 'leave':
-        return packet['john'] + ' has left'
+        return '***' + packet['nickname'] + ' has left'
     elif packet['type'] == 'join':
-        return packet['john'] + ' has joined'    
+        return '***' + packet['nickname'] + ' has joined'    
 
 def make_intro_packet(name):
-    return json.dumps({'john': name, 'type': 'hello'})
+    return json.dumps({'nickname': name, 'type': 'hello'})
 
 def make_chat_packet(data):
     return json.dumps({'message': data, 'type': 'chat'})
